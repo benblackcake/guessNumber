@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.prefix.css">
+</head>
+<body>
+    
+</body>
+
+<div id="game"></div>
+
+<script>
+var cardsArray=[
+    {"name":"A","img":"images/heartA.jpg"},
+    {"name":"K","img":"images/heartK.jpg"},
+
+    {"name":"A","img":"images/clubA.jpg"},
+    {"name":"K","img":"images/clubK.jpg"},
+    
+    {"name":"Q","img":"images/queen1.jpg"},
+    {"name":"Q","img":"images/queen2.jpg"}
+];
+
+
+var game =document.getElementById("game");
+var section = document.createElement('section');
+var count=0;
+var delay=1200;
+var firstClick="";
+var secondClick="";
+var previous=null;
+
+
+section.setAttribute('class', 'grid');
+game.appendChild(section);
+
+// shuffle poker card array
+function shuffleArray(list){
+    var j,x,i;
+    for(i=list.length-1;i>0;i--){
+        j=Math.floor(Math.random()*(i-1));
+        x=list[i];
+        list[i]=list[j];
+        list[j]=x;
+    }
+    return list;
+}
+
+var gameGrid=shuffleArray(cardsArray);
+
+
+//add html back 
+for(var item in gameGrid){
+    // console.log(gameGrid[item].name);
+  var name = gameGrid[item].name,
+      img = gameGrid[item].img;
+
+
+  var card = document.createElement('div');
+  card.classList.add('card');
+  card.dataset.name = name;
+
+  var front = document.createElement('div');
+  front.classList.add('front');
+
+  var back = document.createElement('div');
+  back.classList.add('back');
+  back.style.backgroundImage = 'url(' + img + ')';
+
+  section.appendChild(card);
+  card.appendChild(front);
+  card.appendChild(back);
+
+}
+
+
+
+var match=function match(){
+
+    var selected = document.querySelectorAll('.selected');
+    selected.forEach(function (card) {
+        card.classList.add('match');
+    });
+}
+
+var restGame=function restGame(){
+    firstClick='';
+    secondClick='';
+    previous=null;
+    count=0;
+    var selected = document.querySelectorAll('.selected');
+    selected.forEach(function (card) {
+        card.classList.remove('selected');
+    });
+    // for(card in selected){
+    //     selected[card].classList.remove('selected');
+    //     console.log(selected[card]);
+    // }
+
+}
+
+section.addEventListener('click',function(event){
+    var click =event.target;
+     console.log(click.parentNode.classList);
+
+    if (click.nodeName === 'SECTION' || click === previous || click.parentNode.classList.contains('selected') || click.parentNode.classList.contains('match')) {
+        return;
+    }
+    if(count<2){
+        count++;
+        if(count===1){
+            firstClick=click.parentNode.dataset.name;
+            click.parentNode.classList.add('selected');
+            console.log(click.parentNode.dataset.name);
+        }else{
+            secondClick=click.parentNode.dataset.name;
+            click.parentNode.classList.add('selected');
+            console.log(click.parentNode.dataset.name);
+        }
+
+        if(firstClick&&secondClick){
+            if(firstClick===secondClick){
+                setTimeout(match,delay);
+                console.log("match");
+
+            }
+            //console.log("Not match");
+            setTimeout(restGame,delay)
+        }
+        previous = click;
+    }
+
+});
+
+
+
+
+</script>
+
+</html>
